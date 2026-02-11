@@ -1,0 +1,40 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: #111;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    touch-action: none;
+}
+
+#game-container {
+    position: relative; /* Puanın canvas üzerinde durması için şart */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#puanTablosu {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: white;
+    font-family: 'Arial Black', sans-serif;
+    font-size: 24px;
+    text-shadow: 2px 2px 4px #000;
+    z-index: 10; /* Her şeyin üstünde görünmesi için */
+    pointer-events: none;
+}
+
+canvas {
+    background: #87ceeb;
+    height: 100vh;
+    width: auto;
+    aspect-ratio: 9 / 16;
+    border: 2px solid #000;
+    display: block;
+    image-rendering: pixelated;
+}
