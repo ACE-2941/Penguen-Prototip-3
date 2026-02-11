@@ -16,7 +16,7 @@ const backgroundImg = new Image();
 backgroundImg.src = "assets/arka-plan.jpg"; // Arka plan görselin
 
 const iceImg = new Image();
-iceImg.src = "assets/buz.jpg"; // Engel görselin
+iceImg.src = "assets/buz.png"; // Engel görselin
 
 const penguin = {
     x: 148,
