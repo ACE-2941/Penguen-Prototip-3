@@ -8,23 +8,22 @@ canvas.height = 640;
 let puan = 0;
 let gameActive = true;
 
-// Görselleri Tanımlama
+// Görseller
 const penguinImg = new Image();
 penguinImg.src = "assets/penguin.png";
 
 const backgroundImg = new Image();
-backgroundImg.src = "assets/arka-plan.jpg"; // Arka plan görselin
+backgroundImg.src = "assets/arka-plan.jpg";
 
 const iceImg = new Image();
-iceImg.src = "assets/buz.png"; // Engel görselin
+iceImg.src = "assets/buz.png";
 
 const penguin = {
     x: 148,
     y: 540,
     w: 64, h: 64,
     frameX: 0,
-    frameY: 0,
-    maxFrames: 6, // Görselindeki 6 kareye göre güncellendi
+    maxFrames: 6,
     fps: 0,
     stagger: 8,
     velocityY: 0,
@@ -36,6 +35,7 @@ let obstacles = [];
 let timer = 0;
 let moveDir = 0;
 
+// Kontroller (Mevcut kodunla aynı)
 window.onkeydown = (e) => {
     if (e.key === "ArrowLeft") moveDir = -1;
     if (e.key === "ArrowRight") moveDir = 1;
@@ -44,6 +44,7 @@ window.onkeydown = (e) => {
 window.onkeyup = () => moveDir = 0;
 
 canvas.ontouchstart = (e) => {
+    e.preventDefault(); // Kaydırmayı engelle
     const tx = e.touches[0].clientX;
     const ty = e.touches[0].clientY;
     if (ty < window.innerHeight / 2) jump();
@@ -55,7 +56,6 @@ function jump() {
     if (!penguin.isJumping) {
         penguin.velocityY = -16;
         penguin.isJumping = true;
-        penguin.frameY = 0; // Animasyonun zıplama karesi varsa güncellenebilir
     }
 }
 
@@ -76,12 +76,11 @@ function update() {
     if (penguin.x > canvas.width - penguin.w) penguin.x = canvas.width - penguin.w;
 
     if (++timer > 55) {
-        // Genişlik ve yükseklik oranını koruyarak buz görselini ekliyoruz
         obstacles.push({ 
             x: Math.random() * (canvas.width - 40), 
-            y: -60, 
-            w: 30, 
-            h: 60 
+            y: -80, 
+            w: 40, 
+            h: 80 
         });
         timer = 0;
     }
@@ -94,9 +93,9 @@ function update() {
             puanYazisi.innerText = "PUAN: " + puan;
         }
         
-        // Çarpışma kutusunu (hitbox) görselle uyumlu hale getirmek için daralttık
-        if (penguin.x + 20 < o.x + o.w && penguin.x + 44 > o.x && 
-            penguin.y + 15 < o.y + o.h && penguin.y + 55 > o.y) {
+        // Hitbox ayarı
+        if (penguin.x + 15 < o.x + o.w && penguin.x + 49 > o.x && 
+            penguin.y + 15 < o.y + o.h && penguin.y + 60 > o.y) {
             gameActive = false;
             alert("PUANIN: " + puan);
             location.reload();
@@ -112,21 +111,20 @@ function update() {
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // 1. Arka Planı Çiz (Canvas'ı kaplayacak şekilde)
+    // Arka Plan
     if (backgroundImg.complete) {
         ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
     }
 
-    // 2. Engelleri (Buz) Çiz
+    // Buz Engelleri
     if (iceImg.complete) {
         obstacles.forEach(o => {
             ctx.drawImage(iceImg, o.x, o.y, o.w, o.h);
         });
     }
 
-    // 3. Pengueni Çiz
+    // Penguen
     if (penguinImg.complete) {
-        // Sprite sheet'indeki kare sayısına göre genişliği 1/6 oranında ayarladık
         const spriteWidth = penguinImg.width / 6; 
         ctx.drawImage(
             penguinImg, 
@@ -144,14 +142,21 @@ function gameLoop() {
     if (gameActive) requestAnimationFrame(gameLoop);
 }
 
-// Tüm görsellerin yüklendiğinden emin olmak için
-let loadedImages = 0;
-const totalImages = 3;
-function checkLoad() {
-    loadedImages++;
-    if (loadedImages === totalImages) gameLoop();
-}
+// Görsel yükleme kontrolünü başlatan kısım
+let imagesToLoad = [penguinImg, backgroundImg, iceImg];
+let loadedCount = 0;
 
-penguinImg.onload = checkLoad;
-backgroundImg.onload = checkLoad;
-iceImg.onload = checkLoad;
+imagesToLoad.forEach(img => {
+    if (img.complete) {
+        incrementCounter();
+    } else {
+        img.onload = incrementCounter;
+    }
+});
+
+function incrementCounter() {
+    loadedCount++;
+    if (loadedCount === imagesToLoad.length) {
+        gameLoop();
+    }
+}
