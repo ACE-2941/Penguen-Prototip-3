@@ -21,8 +21,8 @@ iceImg.src = "assets/buz.png";
 const penguin = {
     x: 148,
     y: 540,
-    w: 64,
-    h: 64,
+    w: 96,
+    h: 96,
     frameX: 0,
     maxFrames: 6,
     fps: 0,
@@ -90,10 +90,10 @@ function update() {
 
         // Çarpışma (hitbox)
         if (
-            penguin.x + 15 < o.x + o.w &&
-            penguin.x + 49 > o.x &&
-            penguin.y + 15 < o.y + o.h &&
-            penguin.y + 60 > o.y
+            penguin.x + 20 < o.x + o.w &&
+            penguin.x + 76 > o.x &&
+            penguin.y + 20 < o.y + o.h &&
+            penguin.y + 88 > o.y
         ) {
             gameActive = false;
             alert("PUANIN: " + puan);
