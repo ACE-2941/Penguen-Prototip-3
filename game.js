@@ -28,6 +28,7 @@ const penguin = {
     stagger: 8,
     velocityY: 0,
     gravity: 0.8,
+    isJumping: false
 };
 
 let obstacles = [];
@@ -38,6 +39,7 @@ let moveDir = 0;
 window.onkeydown = (e) => {
     if (e.key === "ArrowLeft") moveDir = -1;
     if (e.key === "ArrowRight") moveDir = 1;
+    if (e.key === " " || e.key === "ArrowUp") jump();
 };
 window.onkeyup = () => moveDir = 0;
 
@@ -45,8 +47,17 @@ canvas.ontouchstart = (e) => {
     e.preventDefault(); // Kaydırmayı engelle
     const tx = e.touches[0].clientX;
     const ty = e.touches[0].clientY;
+    if (ty < window.innerHeight / 2) jump();
     else moveDir = tx < window.innerWidth / 2 ? -1 : 1;
 };
+canvas.ontouchend = () => moveDir = 0;
+
+function jump() {
+    if (!penguin.isJumping) {
+        penguin.velocityY = -16;
+        penguin.isJumping = true;
+    }
+}
 
 function update() {
     if (!gameActive) return;
@@ -57,6 +68,7 @@ function update() {
 
     if (penguin.y > 540) {
         penguin.y = 540;
+        penguin.isJumping = false;
         penguin.velocityY = 0;
     }
 
